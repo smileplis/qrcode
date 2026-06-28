@@ -49,6 +49,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const dotsType = document.getElementById("dots-type");
     const cornersSquareType = document.getElementById("corners-square-type");
     const cornersDotType = document.getElementById("corners-dot-type");
+    const qrMargin = document.getElementById("qr-margin");
+    const qrMarginVal = document.getElementById("qr-margin-val");
+    const qrErrorLevel = document.getElementById("qr-error-level");
 
     // Colors
     const fgColorSolidBtn = document.getElementById("fg-color-solid-btn");
@@ -64,6 +67,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const fgGradType = document.getElementById("fg-grad-type");
     const fgGradAngleCol = document.getElementById("fg-grad-angle-col");
     const fgGradAngle = document.getElementById("fg-grad-angle");
+    const eyeOuterColorInput = document.getElementById("eye-outer-color");
+    const eyeOuterColorText = document.getElementById("eye-outer-color-text");
+    const eyeInnerColorInput = document.getElementById("eye-inner-color");
+    const eyeInnerColorText = document.getElementById("eye-inner-color-text");
     const bgColorInput = document.getElementById("bg-color");
     const bgColorText = document.getElementById("bg-color-text");
     const presetBgBtns = document.querySelectorAll(".preset-bg-btn");
@@ -179,6 +186,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const config = {
             width: 280,
             height: 280,
+            margin: parseInt(qrMargin.value) || 0,
+            qrOptions: {
+                errorCorrectionLevel: qrErrorLevel.value
+            },
             type: "canvas",
             data: qrData,
             image: getSelectedLogo(),
@@ -218,37 +229,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 ]
             };
             
-            // Build corner square and dot gradient to match for premium unified aesthetic
-            config.cornersSquareOptions.gradient = {
-                type: gradType,
-                rotation: gradType === "linear" ? (angle * Math.PI) / 180 : 0,
-                colorStops: [
-                    { offset: 0, color: startColor },
-                    { offset: 1, color: endColor }
-                ]
-            };
-            config.cornersDotOptions.gradient = {
-                type: gradType,
-                rotation: gradType === "linear" ? (angle * Math.PI) / 180 : 0,
-                colorStops: [
-                    { offset: 0, color: startColor },
-                    { offset: 1, color: endColor }
-                ]
-            };
-            // Delete simple colors if gradient is active
             delete config.dotsOptions.color;
-            delete config.cornersSquareOptions.color;
-            delete config.cornersDotOptions.color;
         } else {
             // Solid color
             config.dotsOptions.color = fgColorInput.value;
-            config.cornersSquareOptions.color = fgColorInput.value;
-            config.cornersDotOptions.color = fgColorInput.value;
-            
             delete config.dotsOptions.gradient;
-            delete config.cornersSquareOptions.gradient;
-            delete config.cornersDotOptions.gradient;
         }
+
+        // Eye Colors (Corners)
+        config.cornersSquareOptions.color = eyeOuterColorInput.value;
+        config.cornersDotOptions.color = eyeInnerColorInput.value;
 
         return config;
     }
@@ -369,6 +359,11 @@ document.addEventListener("DOMContentLoaded", () => {
     dotsType.addEventListener("change", updateQR);
     cornersSquareType.addEventListener("change", updateQR);
     cornersDotType.addEventListener("change", updateQR);
+    qrMargin.addEventListener("input", (e) => {
+        qrMarginVal.textContent = `${e.target.value}px`;
+        triggerUpdateDebounced();
+    });
+    qrErrorLevel.addEventListener("change", updateQR);
 
     // -------------------------------------------------------------
     // Colors & Gradients Inputs
@@ -410,7 +405,18 @@ document.addEventListener("DOMContentLoaded", () => {
     setupColorSync(fgColorInput, fgColorText, updateQR);
     setupColorSync(fgGradColor1, fgGradColor1Text, updateQR);
     setupColorSync(fgGradColor2, fgGradColor2Text, updateQR);
+    setupColorSync(eyeOuterColorInput, eyeOuterColorText, updateQR);
+    setupColorSync(eyeInnerColorInput, eyeInnerColorText, updateQR);
     setupColorSync(bgColorInput, bgColorText, updateQR);
+
+    // Keep Eye Colors in sync with fgColor when in solid mode, but allow them to diverge
+    fgColorInput.addEventListener("input", (e) => {
+        eyeOuterColorInput.value = e.target.value;
+        eyeOuterColorText.value = e.target.value;
+        eyeInnerColorInput.value = e.target.value;
+        eyeInnerColorText.value = e.target.value;
+        updateQR();
+    });
 
     fgGradType.addEventListener("change", () => {
         if (fgGradType.value === "radial") {
@@ -763,12 +769,16 @@ document.addEventListener("DOMContentLoaded", () => {
                     dots: dotsType.value,
                     cornersSquare: cornersSquareType.value,
                     cornersDot: cornersDotType.value,
+                    qrMargin: qrMargin.value,
+                    qrErrorLevel: qrErrorLevel.value,
                     isFgGradient: isFgGradient,
                     fgColor: fgColorInput.value,
                     fgGrad1: fgGradColor1.value,
                     fgGrad2: fgGradColor2.value,
                     gradType: fgGradType.value,
                     gradAngle: fgGradAngle.value,
+                    eyeOuterColor: eyeOuterColorInput.value,
+                    eyeInnerColor: eyeInnerColorInput.value,
                     bgColor: bgColorInput.value,
                     clearBg: logoClearBg.checked,
                     logoSize: logoSize.value,
@@ -891,8 +901,22 @@ document.addEventListener("DOMContentLoaded", () => {
         if (state.styling.dots) dotsType.value = state.styling.dots;
         if (state.styling.cornersSquare) cornersSquareType.value = state.styling.cornersSquare;
         if (state.styling.cornersDot) cornersDotType.value = state.styling.cornersDot;
+        if (state.styling.qrMargin) {
+            qrMargin.value = state.styling.qrMargin;
+            qrMarginVal.textContent = `${state.styling.qrMargin}px`;
+        }
+        if (state.styling.qrErrorLevel) qrErrorLevel.value = state.styling.qrErrorLevel;
 
         // Colors
+        if (state.styling.eyeOuterColor) {
+            eyeOuterColorInput.value = state.styling.eyeOuterColor;
+            eyeOuterColorText.value = state.styling.eyeOuterColor;
+        }
+        if (state.styling.eyeInnerColor) {
+            eyeInnerColorInput.value = state.styling.eyeInnerColor;
+            eyeInnerColorText.value = state.styling.eyeInnerColor;
+        }
+
         bgColorInput.value = state.styling.bgColor || "#ffffff";
         bgColorText.value = state.styling.bgColor || "#ffffff";
         // Reset preset backgrounds active style
