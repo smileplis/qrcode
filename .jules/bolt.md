@@ -1,0 +1,3 @@
+## 2024-05-24 - Debouncing Canvas Renders on High-Frequency UI Inputs
+**Learning:** In purely client-side applications doing heavy canvas rendering (like QR code generation with styling), directly binding `input` events of color pickers and range sliders to synchronous render functions causes severe main thread blocking. Standard `change` events are okay, but `input` events fire constantly during a drag.
+**Action:** Always identify UI elements that produce high-frequency `input` events (sliders, color pickers, text inputs) and ensure their handlers are debounced when tied to expensive operations like canvas compilation or SVG generation.
