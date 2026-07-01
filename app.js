@@ -342,6 +342,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 350); // Debounce typing so canvas isn't hammered on every keystroke
     }
 
+    let visualDebounceTimer;
+    function triggerVisualUpdateDebounced() {
+        clearTimeout(visualDebounceTimer);
+        visualDebounceTimer = setTimeout(() => {
+            updateQR();
+        }, 50); // Fast debounce for sliders and color pickers
+    }
+
     [qrUrlInput, qrTextInput, wifiSsid, wifiPassword, emailAddress, emailSubject, emailBody, phoneNumber].forEach(element => {
         element.addEventListener("input", triggerUpdateDebounced);
     });
@@ -407,10 +415,10 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    setupColorSync(fgColorInput, fgColorText, updateQR);
-    setupColorSync(fgGradColor1, fgGradColor1Text, updateQR);
-    setupColorSync(fgGradColor2, fgGradColor2Text, updateQR);
-    setupColorSync(bgColorInput, bgColorText, updateQR);
+    setupColorSync(fgColorInput, fgColorText, triggerVisualUpdateDebounced);
+    setupColorSync(fgGradColor1, fgGradColor1Text, triggerVisualUpdateDebounced);
+    setupColorSync(fgGradColor2, fgGradColor2Text, triggerVisualUpdateDebounced);
+    setupColorSync(bgColorInput, bgColorText, triggerVisualUpdateDebounced);
 
     fgGradType.addEventListener("change", () => {
         if (fgGradType.value === "radial") {
@@ -421,7 +429,7 @@ document.addEventListener("DOMContentLoaded", () => {
         updateQR();
     });
 
-    fgGradAngle.addEventListener("input", updateQR);
+    fgGradAngle.addEventListener("input", triggerVisualUpdateDebounced);
 
     // Preset background choices
     presetBgBtns.forEach(btn => {
@@ -555,7 +563,7 @@ document.addEventListener("DOMContentLoaded", () => {
     logoSize.addEventListener("input", (e) => {
         const percent = Math.round(parseFloat(e.target.value) * 100);
         logoSizeVal.textContent = `${percent}%`;
-        updateQR();
+        triggerVisualUpdateDebounced();
     });
 
     logoClearBg.addEventListener("change", updateQR);
