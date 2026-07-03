@@ -158,37 +158,62 @@
                                 <div class="control-row">
                                     <div class="control-col">
                                         <label for="dots-type">QR Pattern Style</label>
-                                        <div class="select-wrapper">
-                                            <select id="dots-type">
-                                                <option value="rounded" selected>Rounded Dots</option>
-                                                <option value="dots">Fine Dots</option>
-                                                <option value="classy">Classy Curves</option>
-                                                <option value="classy-rounded">Elegant Fluid</option>
-                                                <option value="square">Standard Square</option>
-                                                <option value="extra-rounded">Extra Circular</option>
-                                            </select>
+
+                                        <div class="visual-options-grid" id="dots-type-grid">
+                                            <button class="visual-option-btn active" data-value="rounded" title="Rounded Dots">
+                                                <i class="fa-solid fa-circle" style="transform: scale(0.8);"></i>
+                                            </button>
+                                            <button class="visual-option-btn" data-value="dots" title="Fine Dots">
+                                                <i class="fa-solid fa-braille"></i>
+                                            </button>
+                                            <button class="visual-option-btn" data-value="classy" title="Classy Curves">
+                                                <i class="fa-solid fa-water"></i>
+                                            </button>
+                                            <button class="visual-option-btn" data-value="classy-rounded" title="Elegant Fluid">
+                                                <i class="fa-solid fa-droplet"></i>
+                                            </button>
+                                            <button class="visual-option-btn" data-value="square" title="Standard Square">
+                                                <i class="fa-solid fa-square"></i>
+                                            </button>
+                                            <button class="visual-option-btn" data-value="extra-rounded" title="Extra Circular">
+                                                <i class="fa-solid fa-circle"></i>
+                                            </button>
                                         </div>
+                                        <input type="hidden" id="dots-type" value="rounded">
+
                                     </div>
                                 </div>
                                 <div class="control-row mt-3">
                                     <div class="control-col">
                                         <label for="corners-square-type">Corner Border Style</label>
-                                        <div class="select-wrapper">
-                                            <select id="corners-square-type">
-                                                <option value="dot" selected>Dot / Circle</option>
-                                                <option value="square">Square</option>
-                                                <option value="extra-rounded">Super Rounded</option>
-                                            </select>
+
+                                        <div class="visual-options-grid" id="corners-square-grid">
+                                            <button class="visual-option-btn active" data-value="dot" title="Dot / Circle">
+                                                <i class="fa-regular fa-circle"></i>
+                                            </button>
+                                            <button class="visual-option-btn" data-value="square" title="Square">
+                                                <i class="fa-regular fa-square"></i>
+                                            </button>
+                                            <button class="visual-option-btn" data-value="extra-rounded" title="Super Rounded">
+                                                <i class="fa-solid fa-circle-nodes"></i>
+                                            </button>
                                         </div>
+                                        <input type="hidden" id="corners-square-type" value="dot">
+
                                     </div>
                                     <div class="control-col">
                                         <label for="corners-dot-type">Corner Center Style</label>
-                                        <div class="select-wrapper">
-                                            <select id="corners-dot-type">
-                                                <option value="dot" selected>Circle Dot</option>
-                                                <option value="square">Square Dot</option>
-                                            </select>
+
+                                        <div class="visual-options-grid" id="corners-dot-grid">
+                                            <button class="visual-option-btn active" data-value="dot" title="Circle Dot">
+                                                <i class="fa-solid fa-circle"></i>
+                                            </button>
+                                            <button class="visual-option-btn" data-value="square" title="Square Dot">
+                                                <i class="fa-solid fa-square"></i>
+                                            </button>
                                         </div>
+                                        <input type="hidden" id="corners-dot-type" value="dot">
+
                                     </div>
                                 </div>
                             </div>

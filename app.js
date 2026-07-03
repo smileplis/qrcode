@@ -366,9 +366,37 @@ document.addEventListener("DOMContentLoaded", () => {
     // -------------------------------------------------------------
     // Designs & Shapes Inputs
     // -------------------------------------------------------------
-    dotsType.addEventListener("change", updateQR);
-    cornersSquareType.addEventListener("change", updateQR);
-    cornersDotType.addEventListener("change", updateQR);
+
+    // Visual Option Grid Logic
+    function setupVisualGrid(gridId, inputId) {
+        const grid = document.getElementById(gridId);
+        if(!grid) return;
+        const input = document.getElementById(inputId);
+        const btns = grid.querySelectorAll(".visual-option-btn");
+
+        btns.forEach(btn => {
+            btn.addEventListener("click", () => {
+                btns.forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+                input.value = btn.dataset.value;
+                updateQR();
+            });
+        });
+
+        // Listen to change events to update UI (when loading history)
+        input.addEventListener("change", () => {
+            btns.forEach(b => {
+                if(b.dataset.value === input.value) b.classList.add("active");
+                else b.classList.remove("active");
+            });
+            updateQR();
+        });
+    }
+
+    setupVisualGrid("dots-type-grid", "dots-type");
+    setupVisualGrid("corners-square-grid", "corners-square-type");
+    setupVisualGrid("corners-dot-grid", "corners-dot-type");
+
 
     // -------------------------------------------------------------
     // Colors & Gradients Inputs

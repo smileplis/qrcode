@@ -7,12 +7,12 @@
 }
 
 :root {
-    --bg-dark: #07080e;
-    --card-bg: rgba(17, 19, 31, 0.65);
-    --card-border: rgba(255, 255, 255, 0.07);
+    --bg-dark: #f8fafc;
+    --card-bg: rgba(255, 255, 255, 0.85);
+    --card-border: rgba(0, 0, 0, 0.1);
     --card-border-focus: rgba(99, 102, 241, 0.4);
-    --text-primary: #f8fafc;
-    --text-muted: #94a3b8;
+    --text-primary: #0f172a;
+    --text-muted: #64748b;
     --accent-indigo: #6366f1;
     --accent-purple: #a855f7;
     --accent-pink: #d946ef;
@@ -39,7 +39,7 @@ body {
     position: fixed;
     border-radius: 50%;
     filter: blur(140px);
-    opacity: 0.15;
+    opacity: 0.08;
     z-index: 0;
     pointer-events: none;
     transition: var(--transition);
@@ -1568,4 +1568,37 @@ body {
 /* Spin hover logo animation */
 .fa-spin-hover:hover {
     animation: fa-spin 2s infinite linear;
+}
+
+/* Visual Options Grid */
+.visual-options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.visual-option-btn {
+    height: 40px;
+    border-radius: var(--radius-sm);
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.visual-option-btn:hover {
+    background: rgba(0,0,0,0.05);
+    color: var(--text-primary);
+}
+
+.visual-option-btn.active {
+    border-color: var(--accent-indigo);
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--accent-indigo);
 }
