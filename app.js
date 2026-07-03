@@ -407,10 +407,10 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    setupColorSync(fgColorInput, fgColorText, updateQR);
-    setupColorSync(fgGradColor1, fgGradColor1Text, updateQR);
-    setupColorSync(fgGradColor2, fgGradColor2Text, updateQR);
-    setupColorSync(bgColorInput, bgColorText, updateQR);
+    setupColorSync(fgColorInput, fgColorText, triggerUpdateDebounced);
+    setupColorSync(fgGradColor1, fgGradColor1Text, triggerUpdateDebounced);
+    setupColorSync(fgGradColor2, fgGradColor2Text, triggerUpdateDebounced);
+    setupColorSync(bgColorInput, bgColorText, triggerUpdateDebounced);
 
     fgGradType.addEventListener("change", () => {
         if (fgGradType.value === "radial") {
@@ -421,7 +421,7 @@ document.addEventListener("DOMContentLoaded", () => {
         updateQR();
     });
 
-    fgGradAngle.addEventListener("input", updateQR);
+    fgGradAngle.addEventListener("input", triggerUpdateDebounced);
 
     // Preset background choices
     presetBgBtns.forEach(btn => {
@@ -555,7 +555,7 @@ document.addEventListener("DOMContentLoaded", () => {
     logoSize.addEventListener("input", (e) => {
         const percent = Math.round(parseFloat(e.target.value) * 100);
         logoSizeVal.textContent = `${percent}%`;
-        updateQR();
+        triggerUpdateDebounced();
     });
 
     logoClearBg.addEventListener("change", updateQR);
