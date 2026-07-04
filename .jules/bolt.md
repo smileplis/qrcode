@@ -1,0 +1,3 @@
+## 2024-05-18 - [Debounce Canvas Re-rendering on Continuous Inputs]
+**Learning:** Continuous input events like 'input' on color pickers and range sliders can cause significant performance bottlenecks when bound directly to expensive synchronous DOM/Canvas operations. In this app's architecture, binding `updateQR()` directly to these events caused up to 60 canvas recompilations per second, blocking the main thread and resulting in poor interaction performance.
+**Action:** Always wrap expensive synchronous rendering functions with a debounce function (e.g., `triggerUpdateDebounced()`) when binding them to continuous 'input' events for color pickers, range sliders, or text inputs.
