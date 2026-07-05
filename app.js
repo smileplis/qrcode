@@ -386,7 +386,8 @@ document.addEventListener("DOMContentLoaded", () => {
         updateQR();
     });
 
-    // Sync Hex text box with color pickers
+    // ⚡ Bolt: Sync Hex text box with color pickers
+    // We pass triggerUpdateDebounced to avoid unnecessary QR generation re-renders on continuous dragging
     function setupColorSync(picker, textBox, onUpdate) {
         picker.addEventListener("input", (e) => {
             textBox.value = e.target.value;
@@ -402,12 +403,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    setupColorSync(fgColorInput, fgColorText, updateQR);
-    setupColorSync(fgGradColor1, fgGradColor1Text, updateQR);
-    setupColorSync(fgGradColor2, fgGradColor2Text, updateQR);
-    setupColorSync(eyeOuterColorInput, eyeOuterColorText, updateQR);
-    setupColorSync(eyeInnerColorInput, eyeInnerColorText, updateQR);
-    setupColorSync(bgColorInput, bgColorText, updateQR);
+    setupColorSync(fgColorInput, fgColorText, triggerUpdateDebounced);
+    setupColorSync(fgGradColor1, fgGradColor1Text, triggerUpdateDebounced);
+    setupColorSync(fgGradColor2, fgGradColor2Text, triggerUpdateDebounced);
+    setupColorSync(eyeOuterColorInput, eyeOuterColorText, triggerUpdateDebounced);
+    setupColorSync(eyeInnerColorInput, eyeInnerColorText, triggerUpdateDebounced);
+    setupColorSync(bgColorInput, bgColorText, triggerUpdateDebounced);
 
     // Keep Eye Colors in sync with fgColor when in solid mode, but allow them to diverge
     fgColorInput.addEventListener("input", (e) => {
@@ -415,7 +416,7 @@ document.addEventListener("DOMContentLoaded", () => {
         eyeOuterColorText.value = e.target.value;
         eyeInnerColorInput.value = e.target.value;
         eyeInnerColorText.value = e.target.value;
-        updateQR();
+        triggerUpdateDebounced();
     });
 
     fgGradType.addEventListener("change", () => {
@@ -427,7 +428,7 @@ document.addEventListener("DOMContentLoaded", () => {
         updateQR();
     });
 
-    fgGradAngle.addEventListener("input", updateQR);
+    fgGradAngle.addEventListener("input", triggerUpdateDebounced);
 
     // Preset background choices
     presetBgBtns.forEach(btn => {
@@ -561,7 +562,7 @@ document.addEventListener("DOMContentLoaded", () => {
     logoSize.addEventListener("input", (e) => {
         const percent = Math.round(parseFloat(e.target.value) * 100);
         logoSizeVal.textContent = `${percent}%`;
-        updateQR();
+        triggerUpdateDebounced();
     });
 
     logoClearBg.addEventListener("change", updateQR);

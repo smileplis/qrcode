@@ -1,0 +1,3 @@
+## 2024-07-05 - Event Debouncing on Canvas Generation
+**Learning:** Continuous `input` events on UI controls (like color pickers, range sliders) that trigger synchronous Canvas rendering logic cause massive main thread blocking and UI stutter. The application was recalculating the entire QR code configuration and drawing it to the canvas on every tiny pixel adjustment of a slider.
+**Action:** When connecting inputs to heavy visual rendering functions like canvas drawing or complex DOM recalculations, always use a debounce function (e.g., `setTimeout` clearing) to batch those updates rather than executing them on every `input` event tick.
