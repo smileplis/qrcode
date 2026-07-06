@@ -141,11 +141,15 @@ document.addEventListener("DOMContentLoaded", () => {
             qrCode.append(canvasContainer);
             
             // Listen for canvas rendering complete
-            qrCode._canvas.then(() => {
+            if (qrCode._canvas && qrCode._canvas.then) {
+                qrCode._canvas.then(() => {
                 showLoading(false);
             }).catch(() => {
                 showLoading(false);
             });
+            } else {
+                setTimeout(() => showLoading(false), 100);
+            }
         } catch (e) {
             console.error("Failed to compile QR code: ", e);
             showLoading(false);
@@ -402,12 +406,13 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    setupColorSync(fgColorInput, fgColorText, updateQR);
-    setupColorSync(fgGradColor1, fgGradColor1Text, updateQR);
-    setupColorSync(fgGradColor2, fgGradColor2Text, updateQR);
-    setupColorSync(eyeOuterColorInput, eyeOuterColorText, updateQR);
-    setupColorSync(eyeInnerColorInput, eyeInnerColorText, updateQR);
-    setupColorSync(bgColorInput, bgColorText, updateQR);
+    // ⚡ Bolt: Debouncing continuous input to prevent main thread blocking
+    setupColorSync(fgColorInput, fgColorText, triggerUpdateDebounced);
+    setupColorSync(fgGradColor1, fgGradColor1Text, triggerUpdateDebounced);
+    setupColorSync(fgGradColor2, fgGradColor2Text, triggerUpdateDebounced);
+    setupColorSync(eyeOuterColorInput, eyeOuterColorText, triggerUpdateDebounced);
+    setupColorSync(eyeInnerColorInput, eyeInnerColorText, triggerUpdateDebounced);
+    setupColorSync(bgColorInput, bgColorText, triggerUpdateDebounced);
 
     // Keep Eye Colors in sync with fgColor when in solid mode, but allow them to diverge
     fgColorInput.addEventListener("input", (e) => {
@@ -415,7 +420,8 @@ document.addEventListener("DOMContentLoaded", () => {
         eyeOuterColorText.value = e.target.value;
         eyeInnerColorInput.value = e.target.value;
         eyeInnerColorText.value = e.target.value;
-        updateQR();
+        // ⚡ Bolt: Debouncing input to prevent main thread blocking
+        triggerUpdateDebounced();
     });
 
     fgGradType.addEventListener("change", () => {
@@ -427,7 +433,8 @@ document.addEventListener("DOMContentLoaded", () => {
         updateQR();
     });
 
-    fgGradAngle.addEventListener("input", updateQR);
+    // ⚡ Bolt: Debouncing continuous input to prevent main thread blocking
+    fgGradAngle.addEventListener("input", triggerUpdateDebounced);
 
     // Preset background choices
     presetBgBtns.forEach(btn => {
@@ -561,7 +568,8 @@ document.addEventListener("DOMContentLoaded", () => {
     logoSize.addEventListener("input", (e) => {
         const percent = Math.round(parseFloat(e.target.value) * 100);
         logoSizeVal.textContent = `${percent}%`;
-        updateQR();
+        // ⚡ Bolt: Debouncing continuous input to prevent main thread blocking
+        triggerUpdateDebounced();
     });
 
     logoClearBg.addEventListener("change", updateQR);
