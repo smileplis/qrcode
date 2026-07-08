@@ -141,11 +141,15 @@ document.addEventListener("DOMContentLoaded", () => {
             qrCode.append(canvasContainer);
             
             // Listen for canvas rendering complete
-            qrCode._canvas.then(() => {
-                showLoading(false);
-            }).catch(() => {
-                showLoading(false);
-            });
+            if (qrCode._canvas && typeof qrCode._canvas.then === 'function') {
+                qrCode._canvas.then(() => {
+                    showLoading(false);
+                }).catch(() => {
+                    showLoading(false);
+                });
+            } else {
+                setTimeout(() => showLoading(false), 50);
+            }
         } catch (e) {
             console.error("Failed to compile QR code: ", e);
             showLoading(false);
@@ -402,12 +406,21 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    setupColorSync(fgColorInput, fgColorText, updateQR);
-    setupColorSync(fgGradColor1, fgGradColor1Text, updateQR);
-    setupColorSync(fgGradColor2, fgGradColor2Text, updateQR);
-    setupColorSync(eyeOuterColorInput, eyeOuterColorText, updateQR);
-    setupColorSync(eyeInnerColorInput, eyeInnerColorText, updateQR);
-    setupColorSync(bgColorInput, bgColorText, updateQR);
+    // Debounce for color and slider inputs to avoid blocking main thread
+    let colorDebounceTimer;
+    function triggerColorUpdateDebounced() {
+        clearTimeout(colorDebounceTimer);
+        colorDebounceTimer = setTimeout(() => {
+            updateQR();
+        }, 150);
+    }
+
+    setupColorSync(fgColorInput, fgColorText, triggerColorUpdateDebounced);
+    setupColorSync(fgGradColor1, fgGradColor1Text, triggerColorUpdateDebounced);
+    setupColorSync(fgGradColor2, fgGradColor2Text, triggerColorUpdateDebounced);
+    setupColorSync(eyeOuterColorInput, eyeOuterColorText, triggerColorUpdateDebounced);
+    setupColorSync(eyeInnerColorInput, eyeInnerColorText, triggerColorUpdateDebounced);
+    setupColorSync(bgColorInput, bgColorText, triggerColorUpdateDebounced);
 
     // Keep Eye Colors in sync with fgColor when in solid mode, but allow them to diverge
     fgColorInput.addEventListener("input", (e) => {
@@ -415,7 +428,7 @@ document.addEventListener("DOMContentLoaded", () => {
         eyeOuterColorText.value = e.target.value;
         eyeInnerColorInput.value = e.target.value;
         eyeInnerColorText.value = e.target.value;
-        updateQR();
+        triggerColorUpdateDebounced();
     });
 
     fgGradType.addEventListener("change", () => {
@@ -427,7 +440,7 @@ document.addEventListener("DOMContentLoaded", () => {
         updateQR();
     });
 
-    fgGradAngle.addEventListener("input", updateQR);
+    fgGradAngle.addEventListener("input", triggerColorUpdateDebounced);
 
     // Preset background choices
     presetBgBtns.forEach(btn => {
@@ -561,7 +574,7 @@ document.addEventListener("DOMContentLoaded", () => {
     logoSize.addEventListener("input", (e) => {
         const percent = Math.round(parseFloat(e.target.value) * 100);
         logoSizeVal.textContent = `${percent}%`;
-        updateQR();
+        triggerColorUpdateDebounced();
     });
 
     logoClearBg.addEventListener("change", updateQR);
