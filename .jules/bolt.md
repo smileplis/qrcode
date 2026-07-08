@@ -1,0 +1,3 @@
+## 2026-07-08 - Synchronous Canvas Redrawing on Continuous Inputs
+**Learning:** Found a performance bottleneck where continuous high-frequency inputs (color pickers `input` event, range sliders) were synchronously executing `updateQR()`. `updateQR()` completely recompiles the canvas state using the `qr-code-styling` library, leading to the main thread blocking and laggy UI behavior while dragging sliders/colors.
+**Action:** Debounce inputs (e.g. `logoSize`, color properties) that trigger heavy canvas redrawing logic to only run after the continuous motion completes or at a throttled rate.
