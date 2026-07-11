@@ -402,12 +402,14 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    setupColorSync(fgColorInput, fgColorText, updateQR);
-    setupColorSync(fgGradColor1, fgGradColor1Text, updateQR);
-    setupColorSync(fgGradColor2, fgGradColor2Text, updateQR);
-    setupColorSync(eyeOuterColorInput, eyeOuterColorText, updateQR);
-    setupColorSync(eyeInnerColorInput, eyeInnerColorText, updateQR);
-    setupColorSync(bgColorInput, bgColorText, updateQR);
+    // ⚡ BOLT OPTIMIZATION: Use triggerUpdateDebounced instead of updateQR for continuous input events
+    // to prevent synchronous canvas recalculations from blocking the main thread during fast dragging/typing.
+    setupColorSync(fgColorInput, fgColorText, triggerUpdateDebounced);
+    setupColorSync(fgGradColor1, fgGradColor1Text, triggerUpdateDebounced);
+    setupColorSync(fgGradColor2, fgGradColor2Text, triggerUpdateDebounced);
+    setupColorSync(eyeOuterColorInput, eyeOuterColorText, triggerUpdateDebounced);
+    setupColorSync(eyeInnerColorInput, eyeInnerColorText, triggerUpdateDebounced);
+    setupColorSync(bgColorInput, bgColorText, triggerUpdateDebounced);
 
     // Keep Eye Colors in sync with fgColor when in solid mode, but allow them to diverge
     fgColorInput.addEventListener("input", (e) => {
@@ -415,7 +417,8 @@ document.addEventListener("DOMContentLoaded", () => {
         eyeOuterColorText.value = e.target.value;
         eyeInnerColorInput.value = e.target.value;
         eyeInnerColorText.value = e.target.value;
-        updateQR();
+        // ⚡ BOLT OPTIMIZATION: Debounce continuous color sync to prevent UI freezes
+        triggerUpdateDebounced();
     });
 
     fgGradType.addEventListener("change", () => {
@@ -427,7 +430,8 @@ document.addEventListener("DOMContentLoaded", () => {
         updateQR();
     });
 
-    fgGradAngle.addEventListener("input", updateQR);
+    // ⚡ BOLT OPTIMIZATION: Debounce range slider inputs
+    fgGradAngle.addEventListener("input", triggerUpdateDebounced);
 
     // Preset background choices
     presetBgBtns.forEach(btn => {
@@ -561,7 +565,8 @@ document.addEventListener("DOMContentLoaded", () => {
     logoSize.addEventListener("input", (e) => {
         const percent = Math.round(parseFloat(e.target.value) * 100);
         logoSizeVal.textContent = `${percent}%`;
-        updateQR();
+        // ⚡ BOLT OPTIMIZATION: Debounce continuous range slider to prevent UI freezes
+        triggerUpdateDebounced();
     });
 
     logoClearBg.addEventListener("change", updateQR);
