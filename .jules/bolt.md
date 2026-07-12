@@ -1,0 +1,3 @@
+## 2024-03-24 - [Debouncing Expensive Sync Canvas Rendering]
+**Learning:** In the QRCraft application, the `updateQR` function is computationally expensive because it compiles the QR code and synchronously blocks the main thread. This leads to severe UI freezing (jank) when continuous UI events like color pickers or range sliders trigger `updateQR` on every single "input" event.
+**Action:** Always use the `triggerUpdateDebounced` utility instead of calling `updateQR` directly when binding to continuous UI input events to prevent UI freezing.
