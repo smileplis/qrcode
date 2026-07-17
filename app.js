@@ -402,12 +402,13 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    setupColorSync(fgColorInput, fgColorText, updateQR);
-    setupColorSync(fgGradColor1, fgGradColor1Text, updateQR);
-    setupColorSync(fgGradColor2, fgGradColor2Text, updateQR);
-    setupColorSync(eyeOuterColorInput, eyeOuterColorText, updateQR);
-    setupColorSync(eyeInnerColorInput, eyeInnerColorText, updateQR);
-    setupColorSync(bgColorInput, bgColorText, updateQR);
+    // Use triggerUpdateDebounced to prevent UI freezing on continuous color input
+    setupColorSync(fgColorInput, fgColorText, triggerUpdateDebounced);
+    setupColorSync(fgGradColor1, fgGradColor1Text, triggerUpdateDebounced);
+    setupColorSync(fgGradColor2, fgGradColor2Text, triggerUpdateDebounced);
+    setupColorSync(eyeOuterColorInput, eyeOuterColorText, triggerUpdateDebounced);
+    setupColorSync(eyeInnerColorInput, eyeInnerColorText, triggerUpdateDebounced);
+    setupColorSync(bgColorInput, bgColorText, triggerUpdateDebounced);
 
     // Keep Eye Colors in sync with fgColor when in solid mode, but allow them to diverge
     fgColorInput.addEventListener("input", (e) => {
@@ -415,7 +416,7 @@ document.addEventListener("DOMContentLoaded", () => {
         eyeOuterColorText.value = e.target.value;
         eyeInnerColorInput.value = e.target.value;
         eyeInnerColorText.value = e.target.value;
-        updateQR();
+        triggerUpdateDebounced();
     });
 
     fgGradType.addEventListener("change", () => {
@@ -424,10 +425,11 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             fgGradAngleCol.style.display = "block";
         }
-        updateQR();
+        updateQR(); // Select change, fine to run synchronous
     });
 
-    fgGradAngle.addEventListener("input", updateQR);
+    // Use debounced update for angle slider
+    fgGradAngle.addEventListener("input", triggerUpdateDebounced);
 
     // Preset background choices
     presetBgBtns.forEach(btn => {
@@ -558,10 +560,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Logo adjustments
+    // Use debounced update for size slider to avoid UI freezing
     logoSize.addEventListener("input", (e) => {
         const percent = Math.round(parseFloat(e.target.value) * 100);
         logoSizeVal.textContent = `${percent}%`;
-        updateQR();
+        triggerUpdateDebounced();
     });
 
     logoClearBg.addEventListener("change", updateQR);
