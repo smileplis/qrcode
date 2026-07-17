@@ -1,0 +1,3 @@
+## 2024-05-18 - Debounce Continuous UI Event Renders
+**Learning:** In QRCraft, the `updateQR` function is computationally expensive because it recompiles the canvas synchronously, which blocks the main thread. Binding this function directly to continuous UI input events like color pickers (`setupColorSync`) or range sliders (`logoSize`, `fgGradAngle`) caused the UI to freeze significantly.
+**Action:** When binding continuous UI input elements to trigger QR code updates, always use the `triggerUpdateDebounced` utility instead of calling `updateQR` directly to ensure the UI thread remains unblocked and responsive during continuous user interaction.
